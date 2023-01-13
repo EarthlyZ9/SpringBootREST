@@ -23,5 +23,15 @@ public class User {
     @NotNull
     @NotEmpty
     private LocalDate birthDate;
+
+    @Size(min=5, message="password should be min 5 in length")
+    @NotNull
+    @NotEmpty
+    private String password;
+
+    @NotNull
+    @NotEmpty
+    private String ssn;
+
     private LocalDateTime joinDate;
 }
