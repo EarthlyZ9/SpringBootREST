@@ -12,10 +12,12 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
 
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
 //@JsonIgnoreProperties(value={"password", "ssn"})
 @JsonFilter("UserInfo")
 public class User {

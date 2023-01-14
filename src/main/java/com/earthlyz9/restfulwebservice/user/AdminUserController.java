@@ -1,24 +1,16 @@
 package com.earthlyz9.restfulwebservice.user;
 
-import com.earthlyz9.restfulwebservice.exceptions.BadRequestException;
 import com.earthlyz9.restfulwebservice.exceptions.UserNotFoundException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import jakarta.validation.Valid;
-import java.net.URI;
 import java.util.List;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.converter.json.MappingJacksonValue;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping("/admin")
@@ -46,8 +38,11 @@ public class AdminUserController {
     return mapping;
   }
 
-  @GetMapping(path = "/users/{id}")
-  public MappingJacksonValue retrieveUserById(@PathVariable int id) {
+  //  @GetMapping(path = "/v1/users/{id}")
+  //  @GetMapping(value="/users/{id}/", params="version=1")
+  //  @GetMapping(value = "/users/{id}", headers = "X-API-VERSION=1")
+  @GetMapping(value="/users/{id}", produces = "application/vnd.company.appv1+json")
+  public MappingJacksonValue retrieveUserByIdV1(@PathVariable int id) {
     User user = service.findUserById(id);
     if (user == null) {
       throw new UserNotFoundException();
@@ -64,35 +59,30 @@ public class AdminUserController {
     return mapping;
   }
 
-  @PostMapping(path = "/users")
-  public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-    User savedUser = service.saveUser(user);
 
-    // Location header 에 추가된 유저를 조회할 수 있는 uri 가 부착됨
-    URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{userId}")
-        .buildAndExpand(savedUser.getId()).toUri();
-
-    // 201 상태코드와 유저 정보 반환
-    return ResponseEntity.created(location).body(savedUser);
-  }
-
-  @DeleteMapping(path = "/users/{id}")
-  public User deleteUser(@PathVariable int id) {
-    User user = service.deleteUserById(id);
+  //  @GetMapping(path = "/v2/users/{id}")
+  //  @GetMapping(value="/users/{id}/", params="version=2")
+  //  @GetMapping(value = "/users/{id}", headers = "X-API-VERSION=2")
+  @GetMapping(value="/users/{id}", produces = "application/vnd.company.appv2+json")
+  public MappingJacksonValue retrieveUserByIdV2(@PathVariable int id) {
+    User user = service.findUserById(id);
     if (user == null) {
       throw new UserNotFoundException();
     }
 
-    return user;
-  }
+    UserV2 userV2 = new UserV2();
+    // User -> User2
+    BeanUtils.copyProperties(user, userV2);
+    userV2.setGrade("VIP");
 
-  @PatchMapping(path = "/users/{id}")
-  public User updateUser(@PathVariable int id, @RequestBody User user) {
-    User updatedUser = service.changeUserName(id, user.getName());
-    if (updatedUser == null) {
-      throw new BadRequestException("name field is required");
-    }
+    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name",
+        "joinDate", "ssn", "grade");
 
-    return updatedUser;
+    FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfoV2", filter);
+
+    MappingJacksonValue mapping = new MappingJacksonValue(userV2);
+    mapping.setFilters(filters);
+
+    return mapping;
   }
 }
