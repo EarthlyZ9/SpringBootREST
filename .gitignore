@@ -31,3 +31,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Code Formatting ###
+intellij-java-google-style.xml

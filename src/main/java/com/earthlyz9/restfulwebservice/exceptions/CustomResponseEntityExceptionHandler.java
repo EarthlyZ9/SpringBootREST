@@ -16,60 +16,64 @@ import java.time.LocalDateTime;
 
 @RestController
 @ControllerAdvice
-public class CustomResponseEntityExceptionHandler  extends ResponseEntityExceptionHandler {
+public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<Object> handleAllExceptions(Exception exception, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
-                "Something went wrong, please try again",
-                exception.getMessage(),
-                LocalDateTime.now());
+  @ExceptionHandler(Exception.class)
+  public final ResponseEntity<Object> handleAllExceptions(Exception exception, WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.INTERNAL_SERVER_ERROR.value(),
+        "Something went wrong, please try again",
+        exception.getMessage(),
+        LocalDateTime.now());
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+  }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<Object> handleUserNotFoundException(Exception exception, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                HttpStatus.NOT_FOUND.value(),
-                "Not found",
-                exception.getMessage(),
-                LocalDateTime.now());
+  @ExceptionHandler(UserNotFoundException.class)
+  public final ResponseEntity<Object> handleUserNotFoundException(Exception exception,
+      WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.NOT_FOUND.value(),
+        "Not found",
+        exception.getMessage(),
+        LocalDateTime.now());
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
-    }
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+  }
 
-    @ExceptionHandler(BadRequestException.class)
-    public final ResponseEntity<Object> handleBadRequestException(Exception exception, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation error",
-                exception.getMessage().split(":")[0],
-                LocalDateTime.now());
+  @ExceptionHandler(BadRequestException.class)
+  public final ResponseEntity<Object> handleBadRequestException(Exception exception,
+      WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        "Validation error",
+        exception.getMessage().split(":")[0],
+        LocalDateTime.now());
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+  }
 
-    @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Failed to parse JSON",
-                ex.getMessage(),
-                LocalDateTime.now());
+  @Override
+  protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
+      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        "Failed to parse JSON",
+        ex.getMessage(),
+        LocalDateTime.now());
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+  }
 
-    @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        ExceptionResponse exceptionResponse = new ExceptionResponse(
-                HttpStatus.BAD_REQUEST.value(),
-                "Validation error",
-                ex.getBindingResult().toString(),
-                LocalDateTime.now());
+  @Override
+  protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
+      HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.BAD_REQUEST.value(),
+        "Validation error",
+        ex.getBindingResult().toString(),
+        LocalDateTime.now());
 
-        return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
-    }
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+  }
 }
