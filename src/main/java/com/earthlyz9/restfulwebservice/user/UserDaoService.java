@@ -18,9 +18,9 @@ public class UserDaoService {
   static {
     users.add(new User(1, "Kenneth", LocalDate.of(2000, 1, 6), "pass1", "900909-1234567",
         LocalDateTime.now()));
-    users.add(new User(2, "Alice", LocalDate.of(2000, 7, 29), "pass2", "900909-1234567",
+    users.add(new User(2, "Alice", LocalDate.of(2000, 7, 29), "pass2", "000729-1234567",
         LocalDateTime.now()));
-    users.add(new User(3, "Elena", LocalDate.of(2000, 9, 20), "pass3", "900909-1234567",
+    users.add(new User(3, "Elena", LocalDate.of(2000, 9, 20), "pass3", "010908-1234567",
         LocalDateTime.now()));
   }
 
