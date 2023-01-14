@@ -38,8 +38,9 @@ public class AdminUserController {
     return mapping;
   }
 
-//  @GetMapping(path = "/v1/users/{id}")
-  @GetMapping(value="/users/{id}/", params="version=1")
+  //  @GetMapping(path = "/v1/users/{id}")
+  //  @GetMapping(value="/users/{id}/", params="version=1")
+  @GetMapping(value = "/users/{id}", headers = "X-API-VERSION=1")
   public MappingJacksonValue retrieveUserByIdV1(@PathVariable int id) {
     User user = service.findUserById(id);
     if (user == null) {
@@ -58,8 +59,9 @@ public class AdminUserController {
   }
 
 
-//  @GetMapping(path = "/v2/users/{id}")
-@GetMapping(value="/users/{id}/", params="version=2")
+  // @GetMapping(path = "/v2/users/{id}")
+  // @GetMapping(value="/users/{id}/", params="version=2")
+  @GetMapping(value = "/users/{id}", headers = "X-API-VERSION=2")
   public MappingJacksonValue retrieveUserByIdV2(@PathVariable int id) {
     User user = service.findUserById(id);
     if (user == null) {
