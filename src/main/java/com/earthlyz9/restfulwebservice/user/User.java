@@ -1,18 +1,16 @@
 package com.earthlyz9.restfulwebservice.user;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Past;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 
 @Data
@@ -20,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 //@JsonIgnoreProperties(value={"password", "ssn"})
 @JsonFilter("UserInfo")
-public class User {
+public class User extends RepresentationModel<User> {
 
   private Integer id;
 
