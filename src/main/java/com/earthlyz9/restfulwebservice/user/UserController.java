@@ -2,22 +2,34 @@ package com.earthlyz9.restfulwebservice.user;
 
 import com.earthlyz9.restfulwebservice.exceptions.BadRequestException;
 import com.earthlyz9.restfulwebservice.exceptions.UserNotFoundException;
+import com.fasterxml.jackson.databind.ser.FilterProvider;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import jakarta.validation.Valid;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
 import java.net.URI;
 import java.util.List;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.MappingJacksonValue;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 public class UserController {
 
-  private UserDaoService service;
+  private final UserDaoService service;
+  private final UserResourceAssembler assembler;
 
   // 생성자를 사용한 의존성 주입
-  public UserController(UserDaoService service) {
+  public UserController(UserDaoService service, UserResourceAssembler assembler) {
     this.service = service;
+    this.assembler = assembler;
   }
 
   @GetMapping(path = "/users")
@@ -26,12 +38,13 @@ public class UserController {
   }
 
   @GetMapping(path = "/users/{id}")
-  public User retrieveUserById(@PathVariable int id) {
+  public MappingJacksonValue retrieveUserById(@PathVariable int id) {
     User user = service.findUserById(id);
     if (user == null) {
       throw new UserNotFoundException();
     } else {
-      return user;
+      EntityModel<User> entityModel = assembler.toModel(user);
+      return applyUserInfoFilter(entityModel);
     }
   }
 
@@ -65,5 +78,17 @@ public class UserController {
     }
 
     return updatedUser;
+  }
+
+  static MappingJacksonValue applyUserInfoFilter(EntityModel<User> entityModel) {
+    SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name",
+        "birthDate", "joinDate");
+
+    FilterProvider filters = new SimpleFilterProvider().addFilter("UserInfo", filter);
+
+    MappingJacksonValue mapping = new MappingJacksonValue(entityModel);
+    mapping.setFilters(filters);
+
+    return mapping;
   }
 }
