@@ -13,8 +13,10 @@ public class UserResourceAssembler implements
     RepresentationModelAssembler<User, EntityModel<User>> {
 
   @Override
-  public CollectionModel<EntityModel<User>> toCollectionModel(Iterable<? extends User> entities) {
-    return RepresentationModelAssembler.super.toCollectionModel(entities);
+  public CollectionModel<EntityModel<User>> toCollectionModel(Iterable<? extends User> users) {
+    return RepresentationModelAssembler.super.toCollectionModel(users).add(
+        linkTo(methodOn(UserController.class).listAllUsers()).withSelfRel()
+    );
   }
 
   @Override

@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.RepresentationModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -33,8 +35,10 @@ public class UserController {
   }
 
   @GetMapping(path = "/users")
-  public List<User> listAllUsers() {
-    return service.getAllUsers();
+  public MappingJacksonValue listAllUsers() {
+    List<User> users = service.getAllUsers();
+    CollectionModel<EntityModel<User>> collectionModel = assembler.toCollectionModel(users);
+    return applyUserInfoFilter(collectionModel);
   }
 
   @GetMapping(path = "/users/{id}")
@@ -80,7 +84,8 @@ public class UserController {
     return updatedUser;
   }
 
-  static MappingJacksonValue applyUserInfoFilter(EntityModel<User> entityModel) {
+  static <T extends RepresentationModel<? extends T>> MappingJacksonValue applyUserInfoFilter(
+      RepresentationModel<T> entityModel) {
     SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.filterOutAllExcept("id", "name",
         "birthDate", "joinDate");
 
