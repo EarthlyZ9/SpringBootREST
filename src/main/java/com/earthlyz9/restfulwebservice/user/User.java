@@ -9,13 +9,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.springframework.hateoas.RepresentationModel;
+import org.springframework.hateoas.server.core.Relation;
 
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@Relation(collectionRelation = "users", itemRelation = "user")
 //@JsonIgnoreProperties(value={"password", "ssn"})
 @JsonFilter("UserInfo")
 public class User extends RepresentationModel<User> {
