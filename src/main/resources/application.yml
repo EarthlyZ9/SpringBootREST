@@ -6,3 +6,17 @@ logging:
 spring:
   messages:
     basename: messages
+  main:
+    allow-bean-definition-overriding: true
+springdoc:
+  swagger-ui:
+    path: /api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+  model-and-view-allowed: true
+  show-actuator: true
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"

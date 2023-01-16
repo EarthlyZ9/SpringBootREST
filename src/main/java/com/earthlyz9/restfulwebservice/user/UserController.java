@@ -5,6 +5,12 @@ import com.earthlyz9.restfulwebservice.exceptions.UserNotFoundException;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import java.net.URI;
 import java.util.List;
@@ -22,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@Tag(name = "User")
 @RestController
 public class UserController {
 
@@ -34,6 +41,12 @@ public class UserController {
     this.assembler = assembler;
   }
 
+  @Operation(summary = "Get all users", description = "Fetch all users")
+  @ApiResponses(value = {
+      @ApiResponse(responseCode = "200",
+          description = "Success",
+          content = @Content(schema = @Schema(implementation = SampleUserResponse.class)))
+  })
   @GetMapping(path = "/users")
   public MappingJacksonValue listAllUsers() {
     List<User> users = service.getAllUsers();
