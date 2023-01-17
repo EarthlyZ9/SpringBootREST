@@ -1,7 +1,7 @@
 package com.earthlyz9.restfulwebservice.user;
 
-import com.earthlyz9.restfulwebservice.exceptions.BadRequestException;
 import com.earthlyz9.restfulwebservice.exceptions.UserNotFoundException;
+import com.earthlyz9.restfulwebservice.exceptions.ValidationError;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
@@ -89,9 +89,12 @@ public class UserController {
 
   @PatchMapping(path = "/users/{id}")
   public User updateUser(@PathVariable int id, @RequestBody User user) {
+    if (user == null) {
+      throw new ValidationError("name field is required");
+    }
     User updatedUser = service.changeUserName(id, user.getName());
     if (updatedUser == null) {
-      throw new BadRequestException("name field is required");
+      throw new UserNotFoundException();
     }
 
     return updatedUser;
