@@ -1,5 +1,8 @@
 package com.earthlyz9.restfulwebservice.exceptions;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.time.LocalDateTime;
+import javax.security.sasl.AuthenticationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -12,22 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
-
 @RestController
 @ControllerAdvice
 public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-
-  @ExceptionHandler(Exception.class)
-  public final ResponseEntity<Object> handleAllExceptions(Exception exception, WebRequest request) {
-    ExceptionResponse exceptionResponse = new ExceptionResponse(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        "Something went wrong, please try again",
-        exception.getMessage(),
-        LocalDateTime.now());
-
-    return new ResponseEntity<>(exceptionResponse, HttpStatus.INTERNAL_SERVER_ERROR);
-  }
 
   @ExceptionHandler(UserNotFoundException.class)
   public final ResponseEntity<Object> handleUserNotFoundException(Exception exception,
@@ -41,16 +31,39 @@ public class CustomResponseEntityExceptionHandler extends ResponseEntityExceptio
     return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
   }
 
-  @ExceptionHandler(BadRequestException.class)
-  public final ResponseEntity<Object> handleBadRequestException(Exception exception,
+  @ExceptionHandler(ValidationError.class)
+  public final ResponseEntity<Object> handleValidationErrorException(ValidationError exception,
       WebRequest request) {
     ExceptionResponse exceptionResponse = new ExceptionResponse(
         HttpStatus.BAD_REQUEST.value(),
         "Validation error",
+        exception.getMessage(),
+        LocalDateTime.now());
+
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.NOT_FOUND);
+  }
+
+  @ExceptionHandler(AuthenticationException.class)
+  public ResponseEntity<Object> handleAuthenticationException(AuthenticationException ex,
+      HttpServletResponse response) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        HttpStatus.UNAUTHORIZED.value(),
+        "Authentication needed",
+        ex.getMessage(),
+        LocalDateTime.now());
+    return new ResponseEntity<>(exceptionResponse, HttpStatus.UNAUTHORIZED);
+  }
+
+  @ExceptionHandler(CustomException.class)
+  public final ResponseEntity<Object> handleCustomException(CustomException exception,
+      WebRequest request) {
+    ExceptionResponse exceptionResponse = new ExceptionResponse(
+        exception.getErrorCode().getHttpStatus().value(),
+        exception.getErrorCode().getMessage(),
         exception.getMessage().split(":")[0],
         LocalDateTime.now());
 
-    return new ResponseEntity<>(exceptionResponse, HttpStatus.BAD_REQUEST);
+    return new ResponseEntity<>(exceptionResponse, exception.getErrorCode().getHttpStatus());
   }
 
   @Override
