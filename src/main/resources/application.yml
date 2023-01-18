@@ -8,6 +8,14 @@ spring:
     basename: messages
   main:
     allow-bean-definition-overriding: true
+  datasource:
+    url: jdbc:h2:mem:testdb
+  h2:
+    console:
+      enabled: true
+  jpa:
+    show-sql: true
+    defer-datasource-initialization: true
 springdoc:
   swagger-ui:
     path: /api-docs

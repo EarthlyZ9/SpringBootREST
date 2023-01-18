@@ -16,6 +16,7 @@ public class SecurityConfig {
   @Bean
   public WebSecurityCustomizer webSecurityCustomizer() {
     return web -> web.ignoring().requestMatchers(
+        "/h2-console/**",
         "/v3/api-docs/**",
         "/swagger-ui/**",
         "/api/v1/login" // 임시
@@ -25,7 +26,9 @@ public class SecurityConfig {
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.authorizeHttpRequests(authz -> authz.anyRequest().authenticated())
-        .httpBasic(Customizer.withDefaults());
+        .httpBasic(Customizer.withDefaults()).csrf().disable()
+        .headers().frameOptions().disable()
+    ;
     return http.build();
   }
 
