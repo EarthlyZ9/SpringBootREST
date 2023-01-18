@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum CustomErrorCode {
   BAD_REQUEST(HttpStatus.BAD_REQUEST, "Bad Request"),
+  INSTANCE_NOT_FOUND(HttpStatus.NOT_FOUND, "Not found"),
   NO_PERMISSION(HttpStatus.FORBIDDEN, "Not authorized for the resource"),
   AUTHENTICATION_FAILED(HttpStatus.UNAUTHORIZED, "Authentication needed"),
   DUPLICATE_RESOURCE(HttpStatus.CONFLICT, "Duplicate resource already exists"),
